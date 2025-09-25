@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] float playerSpeed = 8f;
+    [SerializeField] float rotationSpeed = 360f;
+
     private Rigidbody playerRb;
     private InputActions playerInputActions;
     private Vector3 movementInput;
@@ -34,17 +36,32 @@ public class PlayerController : MonoBehaviour
         playerInputActions.Gameplay.Menu.performed -= OpenExitMenu;
 
     }
-
+    private void FixedUpdate()
+    {
+        Move();
+        Look();
+    }
     private void Update()
     {
         GatherInput();
-        Move();
     }
     private void Move()
     {
-        Vector3 moveDirection = new Vector3(movementInput.x, 0, movementInput.y);
-        moveDirection = moveDirection.normalized;
-        playerRb.MovePosition(transform.position + moveDirection * playerSpeed * Time.deltaTime);
+      /*  Vector3 moveDirection = new Vector3(movementInput.x, 0, movementInput.y);
+        moveDirection = moveDirection.normalized;*/
+        playerRb.MovePosition(transform.position + transform.forward * playerSpeed * Time.deltaTime);
+
+    }
+    private void Look()
+    {
+        if (movementInput == Vector3.zero)
+        {
+            return;
+        }
+        Matrix4x4 isometricMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, 45, 0));
+        Vector3 rotatedInput = isometricMatrix.MultiplyPoint3x4(movementInput);
+        Quaternion targetRotation = Quaternion.LookRotation(rotatedInput, Vector3.up);
+        playerRb.MoveRotation(Quaternion.RotateTowards(playerRb.rotation, targetRotation, rotationSpeed * Time.deltaTime));
     }
     private void Attack(InputAction.CallbackContext context)
     {
