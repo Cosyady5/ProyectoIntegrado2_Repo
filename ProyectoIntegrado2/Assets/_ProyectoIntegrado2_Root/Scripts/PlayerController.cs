@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -39,11 +40,12 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         Move();
-        Look();
     }
     private void Update()
     {
         GatherInput();
+        Look();
+
     }
     private void Move()
     {
@@ -54,14 +56,19 @@ public class PlayerController : MonoBehaviour
     }
     private void Look()
     {
-        if (movementInput == Vector3.zero)
+      /*  if (movementInput == Vector3.zero)
         {
             return;
         }
         Matrix4x4 isometricMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, 45, 0));
         Vector3 rotatedInput = isometricMatrix.MultiplyPoint3x4(movementInput);
         Quaternion targetRotation = Quaternion.LookRotation(rotatedInput, Vector3.up);
-        playerRb.MoveRotation(Quaternion.RotateTowards(playerRb.rotation, targetRotation, rotationSpeed * Time.deltaTime));
+        playerRb.MoveRotation(Quaternion.RotateTowards(playerRb.rotation, targetRotation, rotationSpeed * Time.deltaTime));*/
+
+        var relative = (transform.position + movementInput) - transform.position;
+        var rotation = quaternion.LookRotation(relative, Vector3.up);
+
+        transform.rotation = rotation;
     }
     private void Attack(InputAction.CallbackContext context)
     {
