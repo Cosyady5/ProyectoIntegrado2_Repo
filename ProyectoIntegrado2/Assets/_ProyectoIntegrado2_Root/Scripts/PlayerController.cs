@@ -22,10 +22,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        playerInputActions.Gameplay.Enable();
-        playerInputActions.Gameplay.Attack.performed += Attack;
-        playerInputActions.Gameplay.Interact.performed += Interact;
-        playerInputActions.Gameplay.Menu.performed += OpenExitMenu;
+        ActionMode();
 
 
     }
@@ -37,6 +34,22 @@ public class PlayerController : MonoBehaviour
         playerInputActions.Gameplay.Menu.performed -= OpenExitMenu;
 
     }
+    private void GameplayMode()
+    {
+        playerInputActions.Gameplay.Enable();
+        playerInputActions.Gameplay.Attack.performed += Attack;
+        playerInputActions.Gameplay.Interact.performed += Interact;
+        playerInputActions.Gameplay.Menu.performed += OpenExitMenu;
+    }
+
+    private void BuildMode()
+    {
+        playerInputActions.Gameplay.Disable();
+        playerInputActions.Gameplay.Attack.performed -= Attack;
+        playerInputActions.Gameplay.Interact.performed -= Interact;
+        playerInputActions.Gameplay.Menu.performed -= OpenExitMenu;
+    }
+
     private void FixedUpdate()
     {
         Move();
